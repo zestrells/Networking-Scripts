@@ -1,121 +1,127 @@
-import paramiko
-import time
+import netmiko import ConnectHandler
+from datetime import datetime
 
+def credentials(auth):
+    auth.router1 = {
+        'device_type': 'cisco_ios',
+        'ip': '10.10.10.10',
+        'username': 'test',
+        'password': 'cisco'
+    }
+    auth.router2 = {
+        'device_type': 'cisco_ios',
+        'ip': '20.20.20.20',
+        'username': 'test',
+        'password': 'cisco'
+    }
 
-def disable_paging(remote_conn):
-    '"Disable paging on a Cisco router"'
-    remote_conn.send("terminal length 0\n")
-    time.sleep(1)
-    # Clear the buffer on the screen
-    output = remote_conn.recv(1000)
-    return output
+    auth.router3 = {
+        'device_type': 'cisco_ios',
+        'ip': '30.30.30.30',
+        'username': 'test',
+        'password': 'cisco'
+    }
 
-def init_conn(remote_conn):
-    #Creates the SSHClient connection
-    remote_conn_pre = paramiko.SSHClient()
-    #Adds untrusted hosts
-    remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    #initiate SSH connection
-    try:
-        remote_conn_pre.connect(ip, username=username, password=password, look_for_keys=False, allow_agent=False)
-    except paramiko.AuthenticationException:
-        print "[-] Authentication Exception! ..."
-    except paramiko.SSHException:
-        print "[-] SSH Exception! ..."
-
-    print "SSH Connection is being established to %s" % ip
-    #Invoke_shell is establishing an interactive session
-    remote_conn = remote_conn_pre.invoke_shell()
-    print "Interactive SSH session has been established."
-    #Outputs the initial router console
-    output = remote_conn.recv(1000)
-    print output
-    #Turn off limiting of paging
-    disable_paging(remote_conn)
-
-def gigabyte00(remote_conn):
-    #Activates gigabyte 0/0 on R1
-    remote_conn.send("\n")
-    remote_conn.send("enable")
-    time.sleep(2)
-    remote_conn.send("configuration terminal")
-    time.sleep(2)
-    remote_conn.send("int gigabitethernet0/0")
-    time.sleep(2)
-    remote_conn.send("ip address %s" % (00)) #change this depending on IP config
-    time.sleep(2)
-    remote_conn.send("no shutdown")
-
-def gigabyte01(remote_conn):
-    #Activates gigabyte 0/1
-    remote_conn.send("\n")
-    remote_conn.send("enable")
-    time.sleep(2)
-    remote_conn.send("configuration terminal")
-    time.sleep(2)
-    remote_conn.send("int gigabitethernet0/1")
-    time.sleep(2)
-    remote_conn.send("ip address %s" % (01)) #change this depending on IP config
-    time.sleep(2)
-    remote_conn.send("no shutdown")
-
-def gigabyte02(remote_conn):
-    #Activates gigabyte 0/2 on r1
-    remote_conn.send("\n")
-    remote_conn.send("enable")
-    time.sleep(2)
-    remote_conn.send("configuration terminal")
-    time.sleep(2)
-    remote_conn.send("int gigabitethernet0/2")
-    time.sleep(2)
-    remote_conn.send("ip address %s" % (02)) #change this depending on IP config
-    time.sleep(2)
-    remote_conn.send("no shutdown")
-
-
-def vrrp(remote_conn):
-    #Activates VRRP on r1
-    remote_conn.send("\n")
-    remote_conn.send("enable")
-    time.sleep(2)
-    remote_conn.send("configuration terminal")
-    time.sleep(2)
-    remote_conn.send("interface gigabitethernet") #Change this according to which port is VRRP
-    time.sleep(2)
-    remote_conn.send("vrrp 1 ip 10.10.10.5") #change the VRRP number here
-    time.sleep(2)
-    remote_conn.send("vrrp 1 description SDN") #change the priority level for VRRP here
-    time.sleep(2)
-    remote_conn.send("vrrp 1 priority 110")
-    time.sleep(2)
-    remote_conn.send("end")
-
-
-
-
-# Router being connected to
-    ip = '192.168.1.1'
-    user = 'testuser'
-    password = 'cisco'
-
-def main():
+    auth.all_devices = [
+        router1,
+        router2,
+        router3
+    ]
+def router1(router):
+    config_commands = ['enable',
+                       'configuration terminal',
+                       'int gigabitethernet0/0',
+                       'ip address %s' % router.r1_00,  #changes the ip address of 0/0
+                       'no shutdown',
+                       'int gigabitethernet0 / 1',
+                       'ip address %s' % router.r1_01,  #changes the ip address of 0/1
+                       'no shutdown'
+                       'int gigabitethernet0/2',
+                       'ip address %s' % router.r1_02,  #changes the ip address of 0/2
+                       'no shutdown'
+                       'interface gigabitethernet', #Change this according to which port is VRRP
+                       'vrrp 1 ip %s' % router.vrrp_ip1,  # change the VRRP number here
+                       'vrrp 1 description automated',  # change the priority level for VRRP here
+                       'vrrp 1 %s' % router.vrrp_priority1]  # change priority
+    output = net_connect.send_config_set(config_commands)
+    print(output)
+def router2(router):
+    config_commands = ['enable',
+                       'configuration terminal',
+                       'int gigabitethernet0/0',
+                       'ip address %s' % router.r2_00,  # changes the ip address of 0/0
+                       'no shutdown',
+                       'int gigabitethernet0/1',
+                       'ip address %s' % router.r2_01,  # changes the ip address of 0/1
+                       'no shutdown'
+                       'int gigabitethernet0/2',
+                       'ip address %s' % router.r1_02,  # changes the ip address of 0/2
+                       'no shutdown'
+                       'interface gigabitethernet',  # Change this according to which port is VRRP
+                       'vrrp 1 ip %s' % router.vrrp_ip2,  # change the VRRP number here
+                       'vrrp 1 description automated',  # change the priority level for VRRP here
+                       'vrrp 1 %s' % router.vrrp_priority2]  # change priority
+    output = net_connect.send_config_set(config_commands)
+    print(output)
+def router3(router):
+    config_commands = ['enable',
+                       'configuration terminal',
+                       'int gigabitethernet0/0',
+                       'ip address %s' % router.r3_00,  # changes the ip address of 0/0
+                       'no shutdown',
+                       'int gigabitethernet0 / 1',
+                       'ip address %s' % router.r3_01,  # changes the ip address of 0/1
+                       'no shutdown'
+                       'int gigabitethernet0/2',
+                       'ip address %s' % router.r3_02,  # changes the ip address of 0/2
+                       'no shutdown'
+                       'interface gigabitethernet',  # Change this according to which port is VRRP
+                       'vrrp 1 ip %s' % router.vrrp_ip3,  # change the VRRP number here
+                       'vrrp 1 description automated',  # change the priority level for VRRP here
+                       'vrrp 1 %s' % router.vrrp_priority3]  # change priority
+    output = net_connect.send_config_set(config_commands)
+    print(output)
+def main(router):
     print 'Configuring STP and VRRP \n Router 1'
-    print 'Enter the IP address followed by the subnet mask \n Ex: 192.168.1.1 255.255.255.255'
-    r1_00 = raw_input('Enter GigabitEthernet0/0 IP Address: ')
-    r1_01 = raw_input('Enter GigabitEthernet0/1 IP Address: ')
-    r1_02 = raw_input('Enter GigabitEthernet0/2 IP Address: ')
-    print 'Switch 2'
-    r2_00 = raw_input('Enter GigabitEthernet0/0 IP Address: ')
-    r2_01 = raw_input('Enter GigabitEthernet0/1 IP Address: ')
-    r2_02 = raw_input('Enter GigabitEthernet0/2 IP Address: ')
-    print 'Switch 3'
-    r3_00 = raw_input('Enter GigabitEthernet0/0 IP Address: ')
-    r3_01 = raw_input('Enter GigabitEthernet0/1 IP Address: ')
-    r3_02 = raw_input('Enter GigabitEthernet0/2 IP Address: ')
+    print 'Enter the IP address followed by the subnet mask and VRRP \n Ex: 192.168.1.1 255.255.255.255'
+    router.r1_00 = raw_input('Enter GigabitEthernet0/0 IP Address: ')
+    router.r1_01 = raw_input('Enter GigabitEthernet0/1 IP Address: ')
+    router.r1_02 = raw_input('Enter GigabitEthernet0/2 IP Address: ')
+    router.vrrp_ip1 = raw_input('Enter the VRRP IP Address: ')
+    router.vrrp_priority1 = raw_input('Enter the VRRP priority number: ')
+    print 'Router 2'
+    router.r2_00 = raw_input('Enter GigabitEthernet0/0 IP Address: ')
+    router.r2_01 = raw_input('Enter GigabitEthernet0/1 IP Address: ')
+    router.r2_02 = raw_input('Enter GigabitEthernet0/2 IP Address: ')
+    router.vrrp_ip2 = raw_input('Enter the VRRP IP Address: ')
+    router.vrrp_priority2 = raw_input('Enter the VRRP priority number: ')
+    print 'Router 3'
+    router.r3_00 = raw_input('Enter GigabitEthernet0/0 IP Address: ')
+    router.r3_01 = raw_input('Enter GigabitEthernet0/1 IP Address: ')
+    router.r3_02 = raw_input('Enter GigabitEthernet0/2 IP Address: ')
+    router.vrrp_ip3 = raw_input('Enter the VRRP IP Address: ')
+    router.vrrp_priority3 = raw_input('Enter the VRRP priority number: ')
 
-    #init_conn(remote_conn);
-    #r1_gigabyte00(remote_conn);
-    #r1_gigabyte01(remote_conn);
-    #r1_gigabyte02(remote_conn);
 
+def connection(auth):
+    start_time = datetime.now()
+    for a_device in auth.all_devices:
+        if auth.router1(auth):
+            net_connect = ConnectHandler(auth.router1)
+            net_connect.enable()
+            print "{}: {}".format(net_connect.device_type, net_connect.find_prompt())
+
+        outut = net_connect.send_config_set(config_commands)
 main()
+
+
+
+
+
+
+
+
+
+
+
+
