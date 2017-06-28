@@ -1,8 +1,32 @@
-#import netmiko import ConnectHandler
+ #import netmiko import ConnectHandler
 from datetime import datetime
 
-class Router():
+def userInput():
+    num_of_Routers = int(raw_input('How many routers are you configuring? '))
+    router_config = {}
+    ROUTER_NAMES = []
+    for num in range(num_of_Routers):
+        ROUTER_NAMES.append('router' + str(num))
 
+
+
+    print(ROUTER_NAMES)
+
+    for router in range(num_of_Routers):
+        num_Router = raw_input('Which router are you configuring?')
+        print 'Enter the IP address followed by the subnet mask.\n Ex: 192.168.1.1 255.255.255.255'
+        int_00 = raw_input('Enter GigabitEthernet0/0 IP Address: ')
+        int_01 = raw_input('Enter GigabitEthernet0/1 IP Address: ')
+        int_02 = raw_input('Enter GigabitEthernet0/2 IP Address: ')
+        print 'Enter the VRRP IP Address followed by the priority number. \n'
+        vrrp_ip = raw_input('Enter the VRRP IP Address: ')
+        vrrp_priority = raw_input('Enter the VRRP priority number: ')
+        vrrp_interface = raw_input('Enter the VRRP Interface: ')
+        assigntorouter(router)
+    print('All routers have been configured, moving on!')
+
+class Router():
+    routers_configured = False
 
 
     def __init__(self):
@@ -40,44 +64,60 @@ class Router():
             router3
         ]
     def configurationAdjustments(self):
-        self.config_commands = ['enable',
+        self.router_commands1 = ['enable',
                                 'configuration terminal',
                                 'int gigabitethernet0/0',
-                                'ip address 0.0.0.0',  # changes the ip address of 0/0
+                                'ip address ',  # changes the ip address of 0/0
                                 'no shutdown',
-                                'int gigabitethernet0 / 1',
-                                'ip address 0.0.0.0',  # changes the ip address of 0/1
-                                'no shutdown'
+                                'int gigabitethernet0/1',
+                                'ip address ',  # changes the ip address of 0/1
                                 'int gigabitethernet0/2',
-                                'ip address 0.0.0.0',  # changes the ip address of 0/2
-                                'no shutdown'
+                                'ip address ',  # changes the ip address of 0/2
                                 'interface gigabitethernet0/1',  # Change this according to which port is VRRP
-                                'vrrp 1 0.0.0.0',  # change the VRRP number here
+                                'vrrp 1 ',  # change the VRRP number here
                                 'vrrp 1 description automated',  # change the priority level for VRRP here
-                                'vrrp 1 100']  # change priority
-        self.maxConfig = self.maxRouter
-        for c in enumerate(self.config_commands):
-            pass
+                                'vrrp 1 ', #changebrrp priority
+                                'do show vrrp brief']
 
+        self.router_commands2 = ['enable',
+                                'configuration terminal',
+                                'int gigabitethernet0/0',
+                                'ip address ',  # changes the ip address of 0/0
+                                'no shutdown',
+                                'int gigabitethernet0/1',
+                                'ip address ',  # changes the ip address of 0/1
+                                'int gigabitethernet0/2',
+                                'ip address ',  # changes the ip address of 0/2
+                                'interface gigabitethernet0/1',  # Change this according to which port is VRRP
+                                'vrrp 1 ',  # change the VRRP number here
+                                'vrrp 1 description automated',  # change the priority level for VRRP here
+                                'vrrp 1 ', #changebrrp priority
+                                'do show vrrp brief']
+        self.router_commands3 = ['enable',
+                                'configuration terminal',
+                                'int gigabitethernet0/0',
+                                'ip address ',  # changes the ip address of 0/0
+                                'no shutdown',
+                                'int gigabitethernet0/1',
+                                'ip address ',  # changes the ip address of 0/1
+                                'int gigabitethernet0/2',
+                                'ip address ',  # changes the ip address of 0/2
+                                'interface gigabitethernet0/1',  # Change this according to which port is VRRP
+                                'vrrp 1 ',  # change the VRRP number here
+                                'vrrp 1 description automated',  # change the priority level for VRRP here
+                                'vrrp 1 ', #changebrrp priority
+                                'do show vrrp brief']
+        for router in range(self.num_of_Routers):
+            self.router_commands1.insert[3] = 'ip address' + userInput.router1.int_00
         output = net_connect.send_config_set(config_commands)
         print(output)
-
-    def userInput():
-        self.num_of_Routers = int(raw_input('How many routers are you configuring? '))
-        self.router = {}
+    def establishConnection(self):
         for router in range(self.num_of_Routers):
-            self.num_Router = raw_input('Which router are you configuring?')
-            print 'Enter the IP address followed by the subnet mask.\n Ex: 192.168.1.1 255.255.255.255'
-            self.int_00 = raw_input('Enter GigabitEthernet0/0 IP Address: ')
-            self.int_01 = raw_input('Enter GigabitEthernet0/1 IP Address: ')
-            self.int_02 = raw_input('Enter GigabitEthernet0/2 IP Address: ')
-            print 'Enter the VRRP IP Address followed by the priority number. \n'
-            self.vrrp_ip = raw_input('Enter the VRRP IP Address: ')
-            self.vrrp_priority = raw_input('Enter the VRRP priority number: ')
-            self.vrrp_interface = raw_input('Enter the VRRP Interface: ')
-        print('All routers have been configured, moving on!')
+            output = net_connect.send_config_set(self.router_commands.values())
 
 userInput()
+
+
 #def connection(auth):
 #    start_time = datetime.now()
 #    for a_device in auth.all_devices:
