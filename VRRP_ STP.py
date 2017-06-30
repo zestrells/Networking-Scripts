@@ -1,19 +1,22 @@
- #import netmiko import ConnectHandler
+import netmiko import ConnectHandler
 from datetime import datetime
 
 def userInput():
     num_of_Routers = int(raw_input('How many routers are you configuring? '))
     router_config = {}
-    ROUTER_NAMES = []
+    #ROUTER_NAMES = []
     for num in range(num_of_Routers):
-        ROUTER_NAMES.append('router' + str(num))
+        #output = ROUTER_NAMES.append('router' + str(num))
+        router_config['router' + str(num)] = {}
 
 
 
-    print(ROUTER_NAMES)
+    #print(ROUTER_NAMES)
+    print(router_config)
+
 
     for router in range(num_of_Routers):
-        num_Router = raw_input('Which router are you configuring?')
+        print 'Enter the configuration for Router ' + str(router)
         print 'Enter the IP address followed by the subnet mask.\n Ex: 192.168.1.1 255.255.255.255'
         int_00 = raw_input('Enter GigabitEthernet0/0 IP Address: ')
         int_01 = raw_input('Enter GigabitEthernet0/1 IP Address: ')
@@ -22,7 +25,9 @@ def userInput():
         vrrp_ip = raw_input('Enter the VRRP IP Address: ')
         vrrp_priority = raw_input('Enter the VRRP priority number: ')
         vrrp_interface = raw_input('Enter the VRRP Interface: ')
-        assigntorouter(router)
+        router_config = {}
+        router_config['router' + str(router)] = [int_00, int_01, int_02, vrrp_ip, vrrp_priority, vrrp_interface]
+        print (router_config)
     print('All routers have been configured, moving on!')
 
 class Router():
