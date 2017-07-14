@@ -43,7 +43,7 @@ class Router():
 
     def __init__(self):
 
-        self.ip = ip
+        self.ip = ip.
         start_time = datetime.now()
         self.credentials()
 
