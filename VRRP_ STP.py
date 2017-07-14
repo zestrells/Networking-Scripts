@@ -1,5 +1,6 @@
 #import netmiko import ConnectHandler
 from datetime import datetime
+import ipaddress
 
 class UserInput():
 
@@ -8,7 +9,7 @@ class UserInput():
         self.num_of_Routers = 0
         while True:
             try:
-                self.num_of_Routers = int(raw_input('How many routers are you configuring? '))
+                self.num_of_Routers = int(input('How many routers are you configuring? '))
             except ValueError:
                 print("Please enter a correct number of Routers!")
                 continue
@@ -22,22 +23,23 @@ class UserInput():
 
     def configuration(self):
         for router in range(self.num_of_Routers):
-            print 'Enter the configuration for Router ' + str(router)
-            print 'Enter the IP address followed by the subnet mask.\n Ex: 192.168.1.1 255.255.255.255'
-            self.routers['router ' + str(router)] = int_00 = raw_input('Enter GigabitEthernet0/0 IP Address: ')
-            int_01 = raw_input('Enter GigabitEthernet0/1 IP Address: ')
-            int_02 = raw_input('Enter GigabitEthernet0/2 IP Address: ')
-            print 'Enter the VRRP IP Address followed by the priority number. \n'
-            vrrp_ip = raw_input('Enter the VRRP IP Address: ')
-            vrrp_priority = raw_input('Enter the VRRP priority number: ')
-            vrrp_interface = raw_input('Enter the VRRP Interface: ')
-            self.router_config['router' + str(router)] = [int_00, int_01, int_02, vrrp_ip, vrrp_priority, vrrp_interface]
-            print (router_config)
+            print('Enter the configuration for Router ' + str(router))
+            print('Enter the IP address followed by the subnet mask.\n Ex: 192.168.1.1 255.255.255.255')
+            int_00 = input('Enter GigabitEthernet0/0 IP Address: ')
+            int_01 = input('Enter GigabitEthernet0/1 IP Address: ')
+            int_02 = input('Enter GigabitEthernet0/2 IP Address: ')
+            self.routers['router ' + str(router)].update({'int_00': int_00, 'int_01': int_01, 'int_02': int_02})
+            print('Enter the VRRP IP Address followed by the priority number. \n')
+            vrrp_ip = input('Enter the VRRP IP Address: ')
+            vrrp_priority = input('Enter the VRRP priority number: ')
+            vrrp_interface = input('Enter the VRRP Interface: ')
+            self.routers['router ' + str(router)].update({'vrrp_ip': vrrp_ip, 'vrrp_priority': vrrp_priority, 'vrrp_interface': vrrp_interface})
+            print(self.routers)
         print('All routers have been configured, moving on!')
+        return self.routers
+
 
 class Router():
-    routers_configured = False
-
 
     def __init__(self):
 
@@ -47,6 +49,9 @@ class Router():
 
 
         self.credentials
+
+    def getuserinput():
+
     def credentials(self):
         self.router1 = {
             'device_type': 'cisco_ios',
@@ -73,7 +78,7 @@ class Router():
             router2,
             router3
         ]
-    def configurationAdjustments(self):
+    def configCommands(self):
         self.router_commands1 = ['enable',
                                 'configuration terminal',
                                 'int gigabitethernet0/0',
