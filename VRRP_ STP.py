@@ -3,10 +3,12 @@ from datetime import datetime
 import ipaddress
 
 class UserInput():
-
     def __init__(self):
         self.routers = {}
         self.num_of_Routers = 0
+
+    def quantity(self):
+        #establishes how many routers the user is configuring
         while True:
             try:
                 self.num_of_Routers = int(input('How many routers are you configuring? '))
@@ -15,11 +17,11 @@ class UserInput():
                 continue
             else:
                 break
-
-    def quantity(self):
+        #creates dictionary within the router dictionary with all the routers like router 1, rotuer 2 etc.
         for num in range(self.num_of_Routers):
             self.routers['router ' + str(num)] = {}
         print(self.routers)
+        return self.num_of_Routers
 
     def configuration(self):
         for router in range(self.num_of_Routers):
@@ -39,34 +41,32 @@ class UserInput():
         return self.routers
 
 
-class Router():
+class Router(UserInput):
+    def __init__(self, user_input):
+        self.routers = user_input.routers
+        self.num_of_Routers = user_input.num_of_Routers
+        print(user_input.routers)
+        #self.ip = ip
+        #start_time = datetime.now()
+        #self.credentials()
 
-    def __init__(self):
-
-        self.ip = ip.
-        start_time = datetime.now()
-        self.credentials()
-
-
-        self.credentials
-
-    def getuserinput():
+    #def getuserinput():
 
     def credentials(self):
-        self.router1 = {
+        router1 = {
             'device_type': 'cisco_ios',
             'ip': '10.10.10.10',
             'username': 'test',
             'password': 'cisco'
         }
-        self.router2 = {
+        router2 = {
             'device_type': 'cisco_ios',
             'ip': '20.20.20.20',
             'username': 'test',
             'password': 'cisco'
         }
 
-        self.router3 = {
+        router3 = {
             'device_type': 'cisco_ios',
             'ip': '30.30.30.30',
             'username': 'test',
@@ -78,21 +78,22 @@ class Router():
             router2,
             router3
         ]
-    def configCommands(self):
-        self.router_commands1 = ['enable',
-                                'configuration terminal',
-                                'int gigabitethernet0/0',
-                                'ip address ',  # changes the ip address of 0/0
-                                'no shutdown',
-                                'int gigabitethernet0/1',
-                                'ip address ',  # changes the ip address of 0/1
-                                'int gigabitethernet0/2',
-                                'ip address ',  # changes the ip address of 0/2
-                                'interface gigabitethernet0/1',  # Change this according to which port is VRRP
-                                'vrrp 1 ',  # change the VRRP number here
-                                'vrrp 1 description automated',  # change the priority level for VRRP here
-                                'vrrp 1 ', #changebrrp priority
-                                'do show vrrp brief']
+    def configCommands(self, user_input):
+        for router in range(user_input.num_of_Routers):
+            self.router_commands = ['enable',
+                                    'configuration terminal',
+                                    'int gigabitethernet0/0',
+                                    'ip address ' + str(user_input.routers['router ' + str(router)][int_00]),  # changes the ip address of 0/0
+                                    'no shutdown',
+                                    'int gigabitethernet0/1',
+                                    'ip address ',  # changes the ip address of 0/1
+                                    'int gigabitethernet0/2',
+                                    'ip address ',  # changes the ip address of 0/2
+                                    'interface gigabitethernet0/1',  # Change this according to which port is VRRP
+                                    'vrrp 1 ',  # change the VRRP number here
+                                    'vrrp 1 description automated',  # change the priority level for VRRP here
+                                    'vrrp 1 ', #changebrrp priority
+                                    'do show vrrp brief']
 
         self.router_commands2 = ['enable',
                                 'configuration terminal',
